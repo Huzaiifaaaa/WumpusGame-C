@@ -4,11 +4,13 @@
 
 //implicit function declarations
 void printMap();
+
 void exitProgram();
 void cheat(int data[]);
 void printDirections();
 int getRandomPosition();
-
+void checkWin(int data[]);
+void resetGame(int *data);
 
 int main()
 {
@@ -19,20 +21,18 @@ int main()
     char command;
     char message[]="You smell a stench.";
 
-    //0       1      2     3     4      5
-    //bats1, bats2, pit1, pit2, Wumpus, person
+    //bats1, bats2, pit1, pit2, Wumpus, person, arrow
     int coordinates[7]={0};
 
-    //DUBLICATE POSITIONS
     for(int i=0;i<7;i++)
     {
         coordinates[i]=getRandomPosition();
     }
-    roomnumber=coordinates[5];
     coordinates[6]=-1;
 
     while(1)
     {
+        roomnumber=coordinates[5];
         printf("You are in room %d. ",roomnumber);
         if(movescount!=1)
         {
@@ -44,6 +44,7 @@ int main()
 
         if(command=='D' || command=='d')
         {
+            printMap();
             printDirections();
         }
         else if(command=='C' || command=='c')
@@ -52,7 +53,7 @@ int main()
         }
         else if(command=='G' || command=='g')
         {
-            //HERE
+            checkWin(coordinates);
         }
         else if(command=='P'|| command=='p')
         {
@@ -65,11 +66,15 @@ int main()
         }
         else if(command=='R'|| command=='r')
         {
-            //HERE
+            resetGame(&coordinates[0]);
         }
         else if(command=='X'|| command=='x')
         {
             exitProgram();
+        }
+        else
+        {
+            printf("Invalid move. Please retry.");
         }
 
         printf("\n\n");
@@ -79,11 +84,53 @@ int main()
     return 0;
 }
 
+void resetGame(int *data)
+{
+    int coordinates[7]={0};
+    char temp[20];
+    printf("Remember arrowRoom value of -1 means it is with the person.\n");
+    printf("Enter the 7 room locations (1..20) for person, pit1, pit2, bats1, bats2, Wumpus, and arrowRoom:\n");
+    scanf("%d %d %d %d %d %d %d",&coordinates[0],&coordinates[1],&coordinates[2],&coordinates[3],&coordinates[4],&coordinates[5],&coordinates[6],&coordinates[7]);
+
+    for(int i=0;i<7;i++)
+    {
+        data[i]=coordinates[i];
+    }
+}
+
+void checkWin(int data[])
+{
+    while(1)
+    {
+        int choice=0;
+        printf("Enter room (1..20) you think Wumpus is in: ");
+        scanf("%d",&choice);
+
+        if(choice>0 && choice<21)
+        {
+            if(choice==data[4])
+            {
+                printf("You won!\n\n");
+                exitProgram();
+            }
+            else
+            {
+                printf("You lost!\n\n");
+                exitProgram();
+            }
+        }
+        else
+        {
+            printf("Invalid move. Please retry.\n");
+        }
+    }
+}
+
 void cheat(int data[])
 {
     printf("Cheating! Game elements are in the following rooms: \n");
-    printf("Player Wumpus Pit1 Pit2\n");
-    printf("  %d     %d     %d     %d",data[5],data[4],data[2],data[3]);
+    printf("Player   Wumpus   Bats1   Bats2   Pit1   Pit2   Arrow\n");
+    printf("  %d       %d       %d       %d      %d     %d     %d",data[5],data[4],data[0],data[1],data[2],data[3],data[6]);
 }
 
 int getRandomPosition()
@@ -100,7 +147,6 @@ void exitProgram()
 
 void printDirections()
 {
-    printMap();
     printf("\n");
 
     printf("Hunt the Wumpus:\n");
