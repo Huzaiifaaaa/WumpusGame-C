@@ -3,6 +3,7 @@
 #include<stdlib.h>
 #include<time.h>
 
+//custom datastructure to store adjacent rooms for each room
 struct coordinate{
     int x;
     int y;
@@ -19,68 +20,83 @@ void checkWin(int data[]);
 void resetGame(int *data);
 void setAdjacent(struct coordinate *data);
 
+//main function
+//driver function
+//execution starts from here
+//no parameters
+//return type is int
+//returns 0 on successful execution
 int main()
 {
-    srand(time(0));
+    srand(time(0));//seeding the random number generator
 
+    //declaring variables
     int movescount=1;
     int roomnumber=0;
     int coordinates[7]={0};
     struct coordinate adjacent[20];
     char message[]="You smell a stench.";
 
-    for(int i=0;i<7;i++)
+    for(int i=0;i<7;i++)//looping
     {
-        coordinates[i]=getRandomPosition();
+        coordinates[i]=getRandomPosition();//getting random positions for game elements
     }
-    coordinates[6]=-1;
+    coordinates[6]=-1;//setting arrow position
 
-    setAdjacent(&adjacent[0]);
+    setAdjacent(&adjacent[0]);//calling function to set adjacent vertices
 
-    while(1)
+    while(1)//looping infinte times
     {
+        //declaring variables
         int room=0;
         char command[4]={' ',' ',' ',' '};
 
-        roomnumber=coordinates[5];
+        roomnumber=coordinates[5];//setting user room number
         
-        printf("You are in room %d. ",roomnumber);
-        if(movescount!=1)
+        printf("You are in room %d. ",roomnumber);//printing message
+        if(movescount!=1)//printing hint message
         {
-            printf("%s\n",message);
+            printf("%s\n",message);//printing
         }
 
-        printf("\n%d. Enter your move (or 'D' for directions): ",movescount);
-        gets(command);
+        printf("\n%d. Enter your move (or 'D' for directions): ",movescount);//asking for user input
+        gets(command);//getting user input
         
+        //parsing user command
         if(command[3]!=' ')
         {
-            room=(int)command[3]-48;
+            room=(int)command[3]-48;//char to int conversion
         }
-        room+=(((int)command[2]-48)*10);
+        room+=(((int)command[2]-48)*10);//char to int conversion
 
-        if(command[0]=='D' || command[0]=='d')
+        if(command[0]=='D' || command[0]=='d')//if directions command
         {
-            printMap();
-            printDirections();
+            printMap();//printing map
+            printDirections();//printing directions
         }
-        else if(command[0]=='C' || command[0]=='c')
+        else if(command[0]=='C' || command[0]=='c')//if cheat command
         {
-            cheat(coordinates);
+            cheat(coordinates);//calling cheat function
         }
-        else if(command[0]=='G' || command[0]=='g')
+        else if(command[0]=='G' || command[0]=='g')//if guess command
         {
-            checkWin(coordinates);
+            checkWin(coordinates);//calling checkWin function
         }
-        else if(command[0]=='P'|| command[0]=='p')
+        else if(command[0]=='P'|| command[0]=='p')//if print command
         {
-            printMap();
+            printMap();//print the map
         }
-        else if(command[0]=='M'|| command[0]=='m')
+        else if(command[0]=='M'|| command[0]=='m')//if move command
         {
             if(room>0 && room<21 && (adjacent[roomnumber-1].x==room || adjacent[roomnumber-1].y==room || adjacent[roomnumber-1].z==room))
             {
                 coordinates[5]=room;
+
+                //HERE
+                //CHECK FOR WIMPUS
+                //CHECK FOR PIT
+                //CHECK FOR BATS
+
                 movescount++;
             }
             else
@@ -88,86 +104,110 @@ int main()
                 printf("Invalid move. Please retry.\n\n");
             }
         }
-        else if(command[0]=='R'|| command[0]=='r')
+        else if(command[0]=='R'|| command[0]=='r')//if reset command 
         {
-            resetGame(&coordinates[0]);
+            resetGame(&coordinates[0]);//call resetGame function
         }
-        else if(command[0]=='X'|| command[0]=='x')
+        else if(command[0]=='X'|| command[0]=='x')//if exit comamand
         {
-            exitProgram();
+            exitProgram();//call exitProgram function
         }
-        else
+        else//else if invalid command
         {
-            printf("Invalid move. Please retry.");
+            printf("Invalid move. Please retry.");//print invalid move message
         }
-    }
+    }//end of while loop
 
-    return 0;
-}
+    return 0;//returning 0 on successful execution
+}//end if main
 
+//function resetGame(int *data)
+//takes address to coordinates array as parameter
+//sets the values as per user choice
+//return type is void
 void resetGame(int *data)
 {
-    int coordinates[7]={0};
-    char temp[20];
-    printf("Remember arrowRoom value of -1 means it is with the person.\n");
-    printf("Enter the 7 room locations (1..20) for person, pit1, pit2, bats1, bats2, Wumpus, and arrowRoom:\n");
-    scanf("%d %d %d %d %d %d %d",&coordinates[0],&coordinates[1],&coordinates[2],&coordinates[3],&coordinates[4],&coordinates[5],&coordinates[6],&coordinates[7]);
+    int coordinates[7]={0};//declaring an array to store the coordinates
+    int temp[20];//declaring an array to store the user input
+    printf("Remember arrowRoom value of -1 means it is with the person.\n");//printing the message
+    printf("Enter the 7 room locations (1..20) for person, pit1, pit2, bats1, bats2, Wumpus, and arrowRoom:\n");//printing the message
+    scanf("%d %d %d %d %d %d %d",&coordinates[0],&coordinates[1],&coordinates[2],&coordinates[3],&coordinates[4],&coordinates[5],&coordinates[6],&coordinates[7]);//taking input from user
 
-    for(int i=0;i<7;i++)
+    for(int i=0;i<7;i++)//copying data 
     {
         data[i]=coordinates[i];
     }
-}
+}//end of function
 
+//function checkWin(int data)
+//takes array of coordinates as parameter
+//takes user guess, compares with wumpus position, & decides win or lose
+//return type is void
 void checkWin(int data[])
 {
-    while(1)
+    while(1)//infinite loop
     {
-        int choice=0;
-        printf("Enter room (1..20) you think Wumpus is in: ");
-        scanf("%d",&choice);
+        int choice=0;//declaring choice as integer
+        printf("Enter room (1..20) you think Wumpus is in: ");//printing message
+        scanf("%d",&choice);//user input
 
-        if(choice>0 && choice<21)
+        if(choice>0 && choice<21)//if choice is valid
         {
-            if(choice==data[4])
+            if(choice==data[4])//comparing input with wumpus position
             {
-                printf("You won!\n\n");
-                exitProgram();
+                printf("You won!\n\n");//printing message
+                exitProgram();//exit program
             }
             else
             {
-                printf("You lost!\n\n");
-                exitProgram();
+                printf("You lost!\n\n");//printing message
+                exitProgram();//exit program
             }
         }
-        else
+        else//if choice is invalid
         {
-            printf("Invalid move. Please retry.\n");
+            printf("Invalid move. Please retry.\n");//printing message
         }
     }
-}
+}//end of function
 
+//function cheat(int data[])
+//takes array of coordinates as parameter
+//prints the values of the coordinates
+//return type is void
 void cheat(int data[])
 {
-    printf("Cheating! Game elements are in the following rooms: \n");
-    printf("Player   Wumpus   Bats1   Bats2   Pit1   Pit2   Arrow\n");
-    printf("  %d       %d       %d       %d      %d     %d     %d",data[5],data[4],data[0],data[1],data[2],data[3],data[6]);
-}
+    printf("Player   Wumpus   Bats1   Bats2   Pit1   Pit2   Arrow\n");//printing the header
+    printf("  %d       %d       %d       %d      %d     %d     %d",data[5],data[4],data[0],data[1],data[2],data[3],data[6]);//printing the values
+}//end of function
 
+//function getRandomPosition()
+//takes no parameter
+//returns random number generated between 1 and 20
+//return type is int
 int getRandomPosition()
 {
-    int number=(rand() %(1 - 20 + 1)) + 1;
-    return number;
-}
+    int number=(rand() %(1 - 20 + 1)) + 1;//generates random number between 1 and 20
+    return number;//returning number generated
+}//end of function
 
+//function exitProgram()
+//takes no parameter
+//exits the program
+//return type is void
 void exitProgram()
 {
-    printf("Exiting Program ...");
-    exit(0);
-}
+    printf("Exiting Program ...");//printing message
+    exit(0);//exiting the program
+}//end of function
 
+//function printDirections()
+//takes no parameter
+//prints the directions/rules to the user
+//return type is void
 void printDirections()
 {
+    //printing rules & directions;
     printf("\n");
 
     printf("Hunt the Wumpus:\n");
@@ -208,10 +248,15 @@ void printDirections()
 
     printf("Good luck!\n");
 
-}
+}//end of function
 
+//function printMap()
+//takes no parameter
+//prints the map of the cave
+//return type is void
 void printMap()
 {
+    //printing map
     printf("           ______18______\n");
     printf("          /      |       \\\n");
     printf("         /      _9__      \\\n");
@@ -230,10 +275,15 @@ void printMap()
     printf("       \\   /            \\   /\n");
     printf("        \\ /              \\ /\n");
     printf("        16---------------20\n");
-}
+}//end of function
 
+//function setAdjacent(struct coordinate *data)
+//takes struct coordinate as parameter
+//sets the adjacent rooms of the struct coordinate
+//return type is void
 void setAdjacent(struct coordinate *data)
 {
+    //setting adjacent rooms
 
     //1st room
     data[0].x=2;
@@ -334,4 +384,4 @@ void setAdjacent(struct coordinate *data)
     data[19].x=13;
     data[19].y=16;
     data[19].z=19;
-}
+}//end of function
