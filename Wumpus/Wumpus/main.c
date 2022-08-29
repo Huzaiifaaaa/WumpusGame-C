@@ -44,6 +44,18 @@ int main()
         coordinates[i]=getRandomPosition();//getting random positions for game elements
     }
     
+    for(int i=0;i<6;i++)
+    {
+        int dub=coordinates[i];
+        for(int j=0;j<6;j++)
+        {
+            if(coordinates[j]==dub)
+            {
+                coordinates[j]=getRandomPosition();
+            }
+        }
+    }
+
     setAdjacent(&adjacent[0]);//calling function to set adjacent vertices
 
     while(1)//looping infinte times
@@ -115,7 +127,7 @@ int main()
                         coordinates[4]=adjacent[room-1].x;
                     }
                 }
-                else//25% it stayes in same room
+                else//25% it stays in same room
                 {
                     //WUMPUS STAYING IN ROOM
                     if(coordinates[4]==room)
