@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include<stdlib.h>
 #include<time.h>
+#include<string.h>
 
 //custom datastructure to store adjacent rooms for each room
 struct coordinate{
@@ -35,14 +36,14 @@ int main()
     int roomnumber=0;
     int coordinates[7]={0};
     struct coordinate adjacent[20];
-    char message[]="You smell a stench.";
+    char message[]="";
 
-    for(int i=0;i<7;i++)//looping
+    coordinates[6]=-1;//setting arrow position
+    for(int i=0;i<6;i++)//looping
     {
         coordinates[i]=getRandomPosition();//getting random positions for game elements
     }
-    coordinates[6]=-1;//setting arrow position
-
+    
     setAdjacent(&adjacent[0]);//calling function to set adjacent vertices
 
     while(1)//looping infinte times
@@ -56,10 +57,10 @@ int main()
         printf("You are in room %d. ",roomnumber);//printing message
         if(movescount!=1)//printing hint message
         {
-            printf("%s\n",message);//printing
+            printf("%s",message);//printing
         }
 
-        printf("\n%d. Enter your move (or 'D' for directions): ",movescount);//asking for user input
+        printf("\n\n%d. Enter your move (or 'D' for directions): ",movescount);//asking for user input
         gets(command);//getting user input
         
         //parsing user command
@@ -92,10 +93,49 @@ int main()
             {
                 coordinates[5]=room;
 
-                //HERE
-                //CHECK FOR WIMPUS
-                //CHECK FOR PIT
-                //CHECK FOR BATS
+
+                if(adjacent[room-1].x==coordinates[4] || adjacent[room-1].y==coordinates[4] || adjacent[room-1].z==coordinates[4])
+                {
+                    strcpy(message,"You smell a stench.");
+                }
+                else if(adjacent[room-1].x==coordinates[2] || adjacent[room-1].y==coordinates[2] || adjacent[room-1].z==coordinates[2] || adjacent[room-1].x==coordinates[3] || adjacent[room-1].y==coordinates[3] || adjacent[room-1].z==coordinates[3])
+                {
+                    strcpy(message,"You feel a draft.");
+                }
+
+                int number=getRandomPosition();
+
+                if(number>0 && number< 16)//75% it moves to adacent room
+                {
+                    //WUMPUS LEAVING THE ROOM
+                    if(coordinates[4]==room)
+                    {
+                        printf("You hear a slithering sound,as the Wumpus slips away.\n");
+                        printf("Whew, that was close.\n\n");
+                        coordinates[4]=adjacent[room-1].x;
+                    }
+                }
+                else//25% it stayes in same room
+                {
+                    //WUMPUS STAYING IN ROOM
+                    if(coordinates[4]==room)
+                    {
+                        printf("You briefly feel a slimy tentacled arm as your neck is snapped.\n");
+                        printf("It is over.\n\n");
+                        exitProgram();
+                    }
+                }
+
+                //CHECKING FOR PITS
+                if(coordinates[2]==room || coordinates[3]==room)
+                {
+                    printf("Aaaaaaaaahhhhhh....\n");
+                    printf("You fall into a pit and die.\n");
+                    exitProgram();
+                }
+
+                //CHECK FOR BATS HERE
+                //PART OF NEXT VERSION
 
                 movescount++;
             }
@@ -178,11 +218,10 @@ void checkWin(int data[])
 void cheat(int data[])
 {
     printf("Player   Wumpus   Bats1   Bats2   Pit1   Pit2   Arrow\n");//printing the header
-    printf("  %d       %d       %d       %d      %d     %d     %d",data[5],data[4],data[0],data[1],data[2],data[3],data[6]);//printing the values
+    printf("  %d       %d       %d       %d      %d     %d     %d\n\n",data[5],data[4],data[0],data[1],data[2],data[3],data[6]);//printing the values
 }//end of function
 
 //function getRandomPosition()
-//takes no parameter
 //returns random number generated between 1 and 20
 //return type is int
 int getRandomPosition()
@@ -274,7 +313,7 @@ void printMap()
     printf("      \\     15---14---13     /\n");
     printf("       \\   /            \\   /\n");
     printf("        \\ /              \\ /\n");
-    printf("        16---------------20\n");
+    printf("        16---------------20\n\n");
 }//end of function
 
 //function setAdjacent(struct coordinate *data)
