@@ -1,5 +1,8 @@
 # depslib dependency file v1.0
-1661623411 source:c:\users\huzai\documents\github\wumpus-c-fiverr-31\wumpus\wumpus\main.c
+1662831118 source:c:\users\huzai\documents\github\wumpus-c-fiverr-31\wumpus\wumpus\main.c
+	<ctype.h>
 	<stdio.h>
+	<stdlib.h>
+	<string.h>
 	<time.h>
 
